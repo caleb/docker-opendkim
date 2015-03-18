@@ -2,6 +2,8 @@
 # installation. For more advanced options, see opendkim.conf(5) and/or
 # /usr/share/doc/opendkim/examples/opendkim.conf.sample.
 
+UserID opendkim:opendkim
+
 Background false
 Socket {{OPENDKIM_SOCKET}}
 Syslog {{OPENDKIM_SYSLOG}}

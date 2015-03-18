@@ -5,6 +5,12 @@ shopt -s globstar nullglob
 . /helpers/rsyslog.sh
 link_rsyslog
 
+#
+# We need to store keys in a private location... create that location
+#
+__PRIVATE_KEY_DIR="/etc/opendkim/$RANDOM"
+mkdir -p "${__PRIVATE_KEY_DIR}"
+
 if [ -z "${OPENDKIM_SOCKET}" ]; then
   export OPENDKIM_SOCKET=inet:8891
 fi
@@ -140,12 +146,24 @@ for var in ${!KEY_*}; do
     exit 1
   fi
 
+  # Move the private key to a secure location so that we don't get errors about the key
+  # being readable and writable by other users
+  filename="${filename#/}"
+  mkdir -p "${__PRIVATE_KEY_DIR}/${filename}"
+  cp "${filename}" "${__PRIVATE_KEY_DIR}/${filename}/key"
+  filename="${__PRIVATE_KEY_DIR}/${filename}/key"
+
   # If we have all the fields we need, add an entry to the key and signing tables
   if [ -n "${domain}" ] && [ -n "${selector}" ] && [ -n "${user_pattern}" ]; then
     echo "${selector}._domainkey.${domain} ${domain}:${selector}:${filename}" >> /etc/opendkim/KeyTable
     echo "${user_pattern} ${selector}._domainkey.${domain}" >> /etc/opendkim/SigningTable
   fi
 done
+
+# Ensure the private key directory and all its contents are owned by the opendkim user/group and not readable/writable by anyone else
+chown -R opendkim:opendkim "${__PRIVATE_KEY_DIR}"
+chmod -R 600 "${__PRIVATE_KEY_DIR}"
+find "${__PRIVATE_KEY_DIR}" -type d -exec chmod +x {} \;
 
 if [ "${1}" = "genkey" ]; then
   if [ ! -d /keys ]; then
