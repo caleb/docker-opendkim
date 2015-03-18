@@ -30,7 +30,31 @@ if [ "${KEY}" ]; then
   export KEY__DEFAULT__="${KEY}"
 fi
 
+# If no keys are set, and the /keys directory exists, use that as KEYS_DIR
+if [ -z "${!KEY_*}" ] && [ -d /keys ]; then
+  export KEY_DIR=/keys
+fi
+
+# If the user specified a key directory, then look through that directory and
+# add each key
+if [ -n "${KEY_DIR}" ]; then
+  if [ -d "${KEY_DIR}" ]; then
+    i=0
+    for key_file in ${KEY_DIR}/*; do
+      eval "export KEY__DIR__$i=${key_file}"
+      i=$(($i+1))
+    done
+  else
+    echo "You specified a key directory (KEY_DIR=${KEY_DIR}), but that directory does not exist. Did you forget to mount it?" >&2
+    exit 1
+  fi
+
+  unset KEY_DIR
+fi
+
 for var in ${!KEY_*}; do
+  echo "Adding key ${var}=${!var}"
+
   value="${!var}"
   domain=""
   selector=""
