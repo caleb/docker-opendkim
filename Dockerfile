@@ -13,7 +13,7 @@ RUN mkdir -p /helpers \
 &&  chmod +x /usr/local/bin/mo
 
 RUN apt-get update \
-&&  apt-get install -y opendkim opendkim-tools \
+&&  apt-get install -y opendkim opendkim-tools openssl \
 &&  rm /etc/opendkim.conf \
 &&  mkdir -p /etc/opendkim
 

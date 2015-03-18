@@ -123,4 +123,36 @@ for var in ${!KEY_*}; do
   fi
 done
 
-exec "${@}"
+if [ "${1}" = "genkey" ]; then
+  if [ ! -d /keys ]; then
+    echo "You must mount a volume to the /keys directory to generate keys" >&2
+    exit 1
+  fi
+
+  echo
+  echo "Generating an OpenDKIM key"
+  read -p "Domain: " domain
+  read -p "Selector (mail): " selector
+  read -p "Bits (1024): " bits
+
+  if [ -z "${domain}" ]; then
+    echo "You must specify a domain" >&2
+    exit 1
+  fi
+
+  if [ -z "${selector}" ]; then selector=mail; fi
+  if [ -z "${bits}" ]; then bits=1024; fi
+
+  opendkim-genkey --directory=/keys --bits="${bits}" --domain="${domain}" --selector="${selector}"
+  mv /keys/"${selector}.private" /keys/"${selector}._domainkey.${domain}.key"
+
+  # extract the TXT value to print it out in one line
+  echo
+  echo "Create a TXT entry for \"${selector}._domainkey.${domain}\" with the value:"
+  echo
+  sed -e :a -e '$!N; s/\n/ /; ta' /keys/"${selector}.txt" | \
+    sed -r -e 's/^[^"]+"([^"]+)"[^"]+"([^"]+)".*$/\1\2/' > /keys/"${selector}._domainkey.${domain}.txt"
+  cat /keys/"${selector}._domainkey.${domain}.txt"
+else
+  exec "${@}"
+fi
