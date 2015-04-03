@@ -1,0 +1,5 @@
+#!/bin/sh
+
+mkdir -p /var/log/opendkim
+
+exec svlogd -tt /var/log/opendkim

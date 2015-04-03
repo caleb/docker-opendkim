@@ -2,8 +2,8 @@
 set -e
 shopt -s globstar nullglob
 
-. /helpers/rsyslog.sh
-link_rsyslog
+. /helpers/links.sh
+read_link RSYSLOG rsyslog 514 udp
 
 #
 # We need to store keys in a private location... create that location
@@ -19,10 +19,11 @@ if [ -z "${OPENDKIM_SELECTOR}" ]; then
   export OPENDKIM_SELECTOR=mail
 fi
 
-if has_rsyslog; then
+if [ -n "${RSYSLOG_ADDR}" ] && [ -n "${RSYSLOG_PORT}" ]; then
   export OPENDKIM_SYSLOG=yes
 else
   export OPENDKIM_SYSLOG=no
+  rm -rf /etc/service/syslog_forwarder
 fi
 
 # Run the config file through the template

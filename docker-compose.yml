@@ -1,0 +1,14 @@
+rsyslog:
+  image: docker.rodeopartners.com/rsyslog
+  volumes:
+    - log:/var/log
+
+opendkim:
+  build: .
+  links:
+    - rsyslog:rsyslog
+  environment:
+    KEY: /keys/m._domainkey.land.fm.key
+    KEY_2: /keys/i3mm.key:i3mm.com:my_selector:\*@i3mm.com
+  volumes:
+    - keys:/keys
