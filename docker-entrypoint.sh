@@ -58,11 +58,6 @@ if [ -n "${KEY_DIR}" ]; then
   unset KEY_DIR
 fi
 
-# Ensure the private key directory and all its contents are owned by the opendkim user/group and not readable/writable by anyone else
-chown -R opendkim:opendkim "${__PRIVATE_KEY_DIR}"
-chmod -R 600 "${__PRIVATE_KEY_DIR}"
-find "${__PRIVATE_KEY_DIR}" -type d -exec chmod +x {} \;
-
 if [ "${1}" = "genkey" ]; then
   if [ ! -d /keys ]; then
     echo "You must mount a volume to the /keys directory to generate keys" >&2
@@ -195,6 +190,11 @@ else
       echo "${user_pattern} ${selector}._domainkey.${domain}" >> /etc/opendkim/SigningTable
     fi
   done
+
+  # Ensure the private key directory and all its contents are owned by the opendkim user/group and not readable/writable by anyone else
+  chown -R opendkim:opendkim "${__PRIVATE_KEY_DIR}"
+  chmod -R 600 "${__PRIVATE_KEY_DIR}"
+  find "${__PRIVATE_KEY_DIR}" -type d -exec chmod +x {} \;
 
   exec "${@}"
 fi
