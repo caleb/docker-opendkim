@@ -3,7 +3,7 @@ set -e
 shopt -s globstar nullglob
 
 . /helpers/links.sh
-read_link RSYSLOG rsyslog 514 udp
+read-link RSYSLOG rsyslog 514 udp
 
 #
 # We need to store keys in a private location... create that location
