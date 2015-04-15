@@ -24,7 +24,7 @@ RUN apt-get update \
 COPY opendkim.conf.mo     /etc/opendkim.conf.mo
 COPY docker-entrypoint.sh /entrypoint.sh
 
-Add sv /etc/service
+ADD sv /etc/service
 
 VOLUME /var/run/opendkim
 EXPOSE 8891
