@@ -1,3 +1,5 @@
 #!/usr/bin/env bash
 
-docker build --tag="docker.rodeopartners.com/opendkim:latest" .
+NO_CACHE=${1:-false}
+
+docker build --no-cache=$NO_CACHE --tag="docker.rodeopartners.com/opendkim:latest" .
