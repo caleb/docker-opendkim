@@ -5,12 +5,6 @@ shopt -s globstar nullglob
 . /helpers/links.sh
 read-link RSYSLOG rsyslog 514 udp
 
-#
-# We need to store keys in a private location... create that location
-#
-__PRIVATE_KEY_DIR="/etc/opendkim/$RANDOM"
-mkdir -p "${__PRIVATE_KEY_DIR}"
-
 if [ -z "${OPENDKIM_SOCKET}" ]; then
   export OPENDKIM_SOCKET=inet:8891
 fi
@@ -25,12 +19,6 @@ else
   export OPENDKIM_SYSLOG=no
   rm -rf /etc/service/syslog_forwarder
 fi
-
-# Run the config file through the template
-if [ ! -f /etc/opendkim.conf ]; then
-  /usr/local/bin/mo /etc/opendkim.conf.mo > /etc/opendkim.conf
-fi
-rm /etc/opendkim.conf.mo
 
 # Set the default key
 if [ "${KEY}" ]; then
@@ -90,6 +78,18 @@ if [ "${1}" = "genkey" ]; then
     sed -r -e 's/^[^"]+"([^"]+)"[^"]+"([^"]+)".*$/\1\2/' > /keys/"${selector}._domainkey.${domain}.txt"
   cat /keys/"${selector}._domainkey.${domain}.txt"
 else
+  #
+  # We need to store keys in a private location... create that location
+  #
+  __PRIVATE_KEY_DIR="/etc/opendkim/$RANDOM"
+  mkdir -p "${__PRIVATE_KEY_DIR}"
+
+  # Run the config file through the template
+  if [ ! -f /etc/opendkim.conf ] && [ -f /etc/opendkim.conf.mo ]; then
+    /usr/local/bin/mo /etc/opendkim.conf.mo > /etc/opendkim.conf
+  fi
+  rm -f /etc/opendkim.conf.mo
+
   for var in ${!KEY_*}; do
     echo "Adding key ${var}=${!var}"
 
