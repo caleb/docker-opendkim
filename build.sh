@@ -2,4 +2,4 @@
 
 NO_CACHE=${1:-false}
 
-docker build --no-cache=$NO_CACHE --tag="docker.rodeopartners.com/opendkim:latest" .
+docker build --no-cache=$NO_CACHE --tag="caleb/opendkim:latest" .

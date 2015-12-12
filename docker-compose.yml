@@ -1,5 +1,5 @@
 rsyslog:
-  image: docker.rodeopartners.com/rsyslog
+  image: caleb/rsyslog
   volumes:
     - log:/var/log
 
