@@ -6,7 +6,7 @@ UserID opendkim:opendkim
 
 Background false
 Socket {{OPENDKIM_SOCKET}}
-Syslog {{OPENDKIM_SYSLOG}}
+Syslog true
 
 # Required to use local socket with MTAs that access the socket as a non-
 # privileged user (e.g. Postfix)
