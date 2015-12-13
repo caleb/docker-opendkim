@@ -3,7 +3,11 @@ set -e
 shopt -s globstar nullglob
 
 . /helpers/links.sh
-read-link RSYSLOG rsyslog 514 udp
+read-link RSYSLOG rsyslog 514 tcp
+
+# Set up rsyslog
+/usr/local/bin/mo /etc/rsyslog.conf.mo > /etc/rsyslog.conf
+rm /etc/rsyslog.conf.mo
 
 if [ -z "${OPENDKIM_SOCKET}" ]; then
   export OPENDKIM_SOCKET=inet:8891
@@ -11,13 +15,6 @@ fi
 
 if [ -z "${OPENDKIM_SELECTOR}" ]; then
   export OPENDKIM_SELECTOR=mail
-fi
-
-if [ -n "${RSYSLOG_ADDR}" ] && [ -n "${RSYSLOG_PORT}" ]; then
-  export OPENDKIM_SYSLOG=yes
-else
-  export OPENDKIM_SYSLOG=no
-  rm -rf /etc/service/syslog_forwarder
 fi
 
 # Set the default key

@@ -1,5 +1,0 @@
-#!/bin/sh
-
-mkdir -p /var/log/syslog_forwarder
-
-exec svlogd -tt /var/log/syslog_forwarder
