@@ -6,8 +6,10 @@ shopt -s globstar nullglob
 read-link RSYSLOG rsyslog 514 tcp
 
 # Set up rsyslog
-/usr/local/bin/mo /etc/rsyslog.conf.mo > /etc/rsyslog.conf
-rm /etc/rsyslog.conf.mo
+if [ ! -f /etc/rsyslog.conf ]; then
+  /usr/local/bin/mo /etc/rsyslog.conf.mo > /etc/rsyslog.conf
+  rm /etc/rsyslog.conf.mo
+fi
 
 if [ -z "${OPENDKIM_SOCKET}" ]; then
   export OPENDKIM_SOCKET=inet:8891

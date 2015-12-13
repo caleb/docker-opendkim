@@ -28,6 +28,8 @@ COPY docker-entrypoint.sh /entrypoint.sh
 ADD sv /etc/service
 # Add the rsyslog configuration to forward logs to the main rsyslog instance
 ADD rsyslog/rsyslog.conf.mo /etc/rsyslog.conf.mo
+# Remove the default rsyslog.conf file
+RUN rm /etc/rsyslog.conf
 
 VOLUME /var/run/opendkim
 EXPOSE 8891
